@@ -1,12 +1,17 @@
 import json
 import tkinter as tk
+from tkinter import ttk
 import os
-from tkinter import Tk, Button, filedialog, messagebox
+from tkinter import Tk, Button, filedialog, messagebox, Entry, Label
 from cryptography.fernet import Fernet, InvalidToken
+import qrcode
+import re
 
 json_key = b'pHU06D7jwltszEqKvKBFUtB2sXOJntqSDlv1XYhaLeE='
 KEY_FILE = "keys.json"
 
+def sanitize_filename(filename):
+    return re.sub(r'[\\/*?:"<>|]', "", filename)
 
 class EncryptionApp:
     def __init__(self, root):
@@ -15,6 +20,7 @@ class EncryptionApp:
 
         # Initialize Buttons
         self.init_buttons()
+        self.init_search_box()
 
         # Initialize or load keys
         # Initialize or load keys
@@ -32,18 +38,68 @@ class EncryptionApp:
             self.keys = {}
 
     def init_buttons(self):
-        self.encrypt_button = Button(root, text='Encrypt File', command=self.encrypt_file)
-        self.encrypt_button.pack()
+        style = ttk.Style()
 
-        self.decrypt_button = Button(root, text='Decrypt File', command=self.decrypt_file)
-        self.decrypt_button.pack()
+        style.configure('TButton', 
+                        background='white',
+                        foreground='gray',
+                        font=('Arial', 10),
+                        bordercolor='gray',
+                        borderwidth=2)
+        
+        self.encrypt_button = ttk.Button(root, text='Encrypt File', command=self.encrypt_file, style='TButton')
+        self.encrypt_button.grid(row=0, column=0, padx=10, pady=10)
 
-        self.encrypt_dir_button = Button(root, text='Encrypt Directory', command=self.encrypt_directory)
-        self.encrypt_dir_button.pack()
+        self.decrypt_button = ttk.Button(root, text='Decrypt File', command=self.decrypt_file, style='TButton')
+        self.decrypt_button.grid(row=0, column=2, padx=10, pady=10)
 
-        self.decrypt_dir_button = Button(root, text='Decrypt Directory', command=self.decrypt_directory)
-        self.decrypt_dir_button.pack()
+        self.encrypt_dir_button = ttk.Button(root, text='Encrypt Directory', command=self.encrypt_directory, style='TButton')
+        self.encrypt_dir_button.grid(row=1, column=0, padx=10, pady=10)
 
+        self.decrypt_dir_button = ttk.Button(root, text='Decrypt Directory', command=self.decrypt_directory, style='TButton')
+        self.decrypt_dir_button.grid(row=1, column=2, padx=10, pady=10)
+
+    def init_search_box(self):
+        self.head_label = Label(root, text="QR Generater")
+        self.head_label.grid(row=2, column=1, padx=10, pady=10)
+
+        self.water_mark = Label(root, text="Crypter v1.1", fg='gray')
+        self.water_mark.grid(row=7, column=1, padx=10, pady=10)
+
+        self.search_label = Label(root, text="URL:")
+        self.search_label.grid(row=3, column=0, padx=10, pady=10)
+
+        self.search_entry = Entry(root)
+        self.search_entry.grid(row=3, column=1, padx=10, pady=10)
+
+        # Button that triggers the QR code generation
+        self.generate_button = ttk.Button(root, text='Generate', command=self.generate_qr_code, style='TButton')
+        self.generate_button.grid(row=3, column=2, padx=10, pady=10)
+
+
+    def generate_qr_code(self):
+        url = self.search_entry.get()
+        sanitized_url = sanitize_filename(url)
+        qr_image_name = f"{sanitized_url}_qr.png"
+        if url:
+            try:
+                qr = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_H,
+                    box_size=10,
+                    border=4,
+                )
+                qr.add_data(url)
+                qr.make(fit=True)
+
+                img = qr.make_image(fill='black', back_color='white')
+                img.save(f"{qr_image_name}")
+
+                messagebox.showinfo("QR Code", f"QR Code has been generated for your url at {os.getcwd()}")
+            except Exception as e:
+                messagebox.showerror("Error", e)
+
+    
     def encrypt_directory(self):
         dir_path = filedialog.askdirectory()
         try:
@@ -70,8 +126,9 @@ class EncryptionApp:
         except NotADirectoryError:
             messagebox.showerror("Error", "Please select a valid directory!")
 
-    def encrypt_file(self):
-        file_path = filedialog.askopenfilename()
+    def encrypt_file(self, file_path = None):
+        if file_path is None:
+            file_path = filedialog.askopenfilename()
         if file_path:
             # Generate a key for this file
             key = Fernet.generate_key()
@@ -93,8 +150,9 @@ class EncryptionApp:
 
             messagebox.showinfo("File Encrypted", "The selected file has been encrypted!")
 
-    def decrypt_file(self):
-        file_path = filedialog.askopenfilename()
+    def decrypt_file(self, file_path = None):
+        if file_path is None:
+            file_path = filedialog.askopenfilename()
         if file_path:
             # Retrieve the key
             if file_path in self.keys:
@@ -122,7 +180,7 @@ class EncryptionApp:
 
 root = Tk()
 my_gui = EncryptionApp(root)
-root.geometry('600x400')
+root.geometry('400x290')
 root.iconbitmap('logo.ico')
 root.resizable(False, False)
 root.mainloop()
