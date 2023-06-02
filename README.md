@@ -17,7 +17,7 @@ This Python script implements a simple desktop application using the Tkinter lib
 ## Download
 
 Download from [release](https://github.com/kelivnjudha/Crypter/releases/tag/v1.1)
-If QR Generater doesn't work, Please run the app as administrator.
+. If QR Generater doesn't work, Please run the app as administrator.
 
 ## Install from source
 
