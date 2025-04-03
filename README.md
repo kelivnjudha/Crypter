@@ -1,6 +1,6 @@
-# Modern Crypter v1.2
+# Crypter v1.2
 
-Modern Crypter is a robust desktop application that securely encrypts and decrypts files and directories using advanced encryption techniques. With a modern, PyQt5-based user interface featuring an integrated terminal for real-time, color-coded logs, and built-in QR code generation, Modern Crypter provides an intuitive and powerful tool for protecting your data.
+Crypter is a robust desktop application that securely encrypts and decrypts files and directories using advanced encryption techniques. With a modern, PyQt5-based user interface featuring an integrated terminal for real-time, color-coded logs, and built-in QR code generation, Modern Crypter provides an intuitive and powerful tool for protecting your data.
 
 ## Features
 
