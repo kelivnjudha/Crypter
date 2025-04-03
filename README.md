@@ -1,30 +1,37 @@
-# Crypter
+# Modern Crypter v1.2
 
-This Python script implements a simple desktop application using the Tkinter library that allows a user to encrypt or decrypt files and directories. It also provides the functionality to generate QR codes from URLs. Here's a detailed description of the script's main components and functionalities:
+Modern Crypter is a robust desktop application that securely encrypts and decrypts files and directories using advanced encryption techniques. With a modern, PyQt5-based user interface featuring an integrated terminal for real-time, color-coded logs, and built-in QR code generation, Modern Crypter provides an intuitive and powerful tool for protecting your data.
 
-1 Key Handling: The application uses symmetric encryption provided by the cryptography.fernet module. A separate key is generated for each file or directory that's encrypted. The keys are stored in a JSON file, with the file paths as the keys and the encryption keys as the values. The JSON file itself is encrypted using a master key json_key.
+## Features
 
-2 File and Directory Encryption/Decryption: The script provides functionality to encrypt or decrypt files and directories. When encrypting, a unique key is generated for each file, and the file's content is replaced with its encrypted form. When decrypting, the original key is retrieved from the JSON file, and the file's content is replaced with its decrypted form.
+- **Advanced Encryption/Decryption**  
+  - Uses Fernet symmetric encryption to protect files with a unique key for each file.
+  - Stores both the encryption key and the full encrypted text in an encrypted JSON file for robust data recovery.
+  - Implements a fuzzy matching recovery mechanism to restore files even if data is partially lost or altered.
 
-3 QR Code Generation: The script also provides the ability to generate QR codes from URLs. The user can enter a URL into a Tkinter Entry widget, and when they press the 'Generate' button, a QR code is generated and saved to a file named after the sanitized URL.
+- **Secure Key Storage**  
+  - Encryption keys and encrypted content are stored persistently in an encrypted JSON file, ensuring data integrity across system restarts.
 
-4 User Interface: The script uses Tkinter to provide a simple graphical user interface for the application. The user can choose to encrypt or decrypt a file or directory by pressing the appropriate button. They can also generate a QR code for a URL by entering the URL into a text box and pressing the 'Generate' button. All buttons and labels are customized with a certain style, and the overall layout of the application is grid-based for easy use and understanding.
+- **Modern PyQt5 GUI**  
+  - Sleek and creative user interface with an integrated terminal window that displays color-coded log messages.
+  - Custom application logo (`logo.ico`) is used throughout the app for a polished, professional look.
 
-5 Error Handling: The script includes error handling for several scenarios, such as when a file or directory doesn't exist, if no key is found for a file during decryption, or if decryption fails.
+- **QR Code Generation**  
+  - Generate and display QR codes from user-provided URLs.
+  - Automatically saves QR codes with sanitized filenames.
 
-6 This script is an excellent starting point for understanding file encryption and decryption, as well as QR code generation and the development of GUIs in Python
+- **Cross-Platform and Easy Deployment**  
+  - Compatible with Python 3.10.11.
+  - Easily compile to a standalone executable using PyInstaller.
 
-## Download
+## Installation
 
-Download from [release](https://github.com/kelivnjudha/Crypter/releases/tag/v1.1)
-. If QR Generater doesn't work, Please run the app as administrator.
+### Download from [release]
+(https://github.com/kelivnjudha/Crypter/releases/tag/v1.2)
 
-## Install from source
+### From Source
 
-```
-git clone https://github.com/kelivnjudha/Crypter.git
-cd Crypter
-pip install qrcode[pil]
-pip install tkinter
-python3 main.py
-```
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/yourusername/Crypter.git
+   cd Crypter
