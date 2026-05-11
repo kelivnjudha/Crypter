@@ -1,36 +1,121 @@
-# Crypter v1.2
+# Crypter v2
 
-Crypter is a robust desktop application that securely encrypts and decrypts files and directories using advanced encryption techniques. With a modern, PyQt5-based user interface featuring an integrated terminal for real-time, color-coded logs, and built-in QR code generation, Crypter provides an intuitive and powerful tool for protecting your data.
+Crypter v2 is a safer rebuild of the original Python encryption app. It keeps
+the old v1.x files in `legacy/` for recovery, while new encryption uses
+self-describing encrypted files so decryption no longer depends on a fragile
+absolute path entry in `keys.json`.
 
-## Features
+## Highlights
 
-- **Advanced Encryption/Decryption**  
-  - Uses Fernet symmetric encryption to protect files with a unique key for each file.
-  - Stores both the encryption key and the full encrypted text in an encrypted JSON file for robust data recovery.
-  - Implements a fuzzy matching recovery mechanism to restore files even if data is partially lost or altered.
+- Password encryption by default with Scrypt key derivation.
+- AES-256-GCM streaming encryption for stable large-file handling.
+- ChaCha20-Poly1305 option for files and text.
+- File, directory, and text encryption workflows.
+- Atomic writes and new output files by default to reduce data-loss risk.
+- Optional 256-bit key-file mode.
+- Legacy recovery for old v1.x Fernet files using `legacy/keys.json`.
+- PyQt5 desktop UI plus CLI commands.
 
-- **Secure Key Storage**  
-  - Encryption keys and encrypted content are stored persistently in an encrypted JSON file, ensuring data integrity across system restarts.
+## Setup
 
-- **Modern PyQt5 GUI**  
-  - Sleek and creative user interface with an integrated terminal window that displays color-coded log messages.
-  - Custom application logo (`logo.ico`) is used throughout the app for a polished, professional look.
+Use Python 3.10 or newer.
 
-- **QR Code Generation**  
-  - Generate and display QR codes from user-provided URLs.
-  - Automatically saves QR codes with sanitized filenames.
+```bash
+python -m pip install -r requirements.txt
+```
 
-- **Cross-Platform and Easy Deployment**  
-  - Compatible with Python 3.10.11.
-  - Easily compile to a standalone executable using PyInstaller.
+For development and tests:
 
-## Installation
+```bash
+python -m pip install -r requirements-dev.txt
+```
 
-### Download from [release](https://github.com/kelivnjudha/Crypter/releases/tag/v1.2)
+## Start The App
 
-### From Source
+Launch the v2 desktop app:
 
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/yourusername/Crypter.git
-   cd Crypter
+```bash
+python crypter_v2.py
+```
+
+The old root launcher still works and now opens v2:
+
+```bash
+python crypter_v1.2.py
+```
+
+## Quick CLI Usage
+
+Encrypt a file with a password:
+
+```bash
+python crypter_v2.py encrypt-file report.pdf --compress
+```
+
+Decrypt a file:
+
+```bash
+python crypter_v2.py decrypt-file report.pdf.crypter
+```
+
+Encrypt a folder:
+
+```bash
+python crypter_v2.py encrypt-dir MyFolder -o MyFolder.crypterdir
+```
+
+Decrypt a folder package:
+
+```bash
+python crypter_v2.py decrypt-dir MyFolder.crypterdir
+```
+
+Create and use a key file:
+
+```bash
+python crypter_v2.py make-key recovery.crypterkey
+python crypter_v2.py encrypt-file report.pdf --key-file recovery.crypterkey
+python crypter_v2.py decrypt-file report.pdf.crypter --key-file recovery.crypterkey
+```
+
+Encrypt and decrypt text:
+
+```bash
+python crypter_v2.py encrypt-text --text "secret message"
+python crypter_v2.py decrypt-text "crypter2:..."
+```
+
+Recover an old v1.x encrypted file:
+
+```bash
+python crypter_v2.py legacy-decrypt encrypted-file.ext --keys legacy/keys.json
+```
+
+See [docs/USAGE.md](docs/USAGE.md) for full setup, GUI, CLI, recovery, and
+development instructions.
+
+## Project Layout
+
+- `crypter_v2.py`: v2 GUI and CLI entry point.
+- `crypter_core.py`: reusable encryption/decryption engine.
+- `crypter_v1.2.py`: compatibility launcher that starts v2.
+- `legacy/`: original v1.x app files and old key store for recovery.
+- `tests/`: core encryption and legacy recovery tests.
+
+## Safety Notes
+
+- Password mode has no key database to lose, but the password cannot be
+  recovered if forgotten.
+- Key-file mode requires backing up the `.crypterkey` file. Losing it means
+  encrypted data cannot be decrypted.
+- New file encryption writes `filename.crypter` by default and leaves the
+  original file untouched.
+- Keep `legacy/keys.json` only for v1.x recovery. It is not used for new v2
+  encryption.
+
+## Verification
+
+```bash
+python -m compileall crypter_core.py crypter_v2.py crypter_v1.2.py tests
+python -m pytest --basetemp .pytest-tmp
+```
